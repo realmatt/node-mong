@@ -1,0 +1,61 @@
+const expect = require('expect');
+const request = require('supertest');
+
+const {app} = require('./../server');
+const {Todo} = require('./../models/todo');
+
+/* Remove all the elements in collection */
+beforeEach((done)=>{
+    Todo.remove({}).then(()=>{
+        done();
+    })
+});
+
+
+
+describe('POST /todos',()=>{
+
+    it('should create a new todo',(done)=>{
+        var text = 'From test tast';
+        request(app)
+        .post('/todos')
+        .send({text})
+        .expect(200)
+        .expect((res)=>{
+            expect(res.body.text).toBe(text);
+        })
+        .end((err,res)=>{
+            if(err){
+                return done(err);
+            }
+            //check also db if it exist there
+            Todo.find({}).then((todos)=>{
+                expect(todos.length).toBe(1);
+                expect(todos[0].text).toBe(text);
+                done();
+            }).catch((e)=> done(e));
+        });
+    });
+
+    it('should not create todo with invalid body data',(done)=>{
+        request(app)
+        .post('/todos')
+        .send({text:''})
+        .expect(400)
+        // .expect((res)=>{
+        //     //console.log(res);
+        //     expect(res.body.errors.text.name).toBe('ValidatorError');
+        // })
+        .end((err,res)=>{
+            if(err){
+                return done(err);
+            }
+            // check db if none exist in db
+            Todo.find({}).then((todos)=>{
+                expect(todos.length).toBe(0);
+                done();
+            }).catch((e)=>done(e));
+        })
+    });
+
+});
