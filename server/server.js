@@ -7,6 +7,7 @@ const _ = require('lodash');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {Users} = require('./models/user');
+var {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 const port = process.env.PORT || 3000;
@@ -106,6 +107,21 @@ app.post('/users',(req,res)=>{
         res.status(400).send(e);
     });
 
+});
+
+app.get('/users/me',authenticate,(req,res)=>{
+    // var token = req.header('x-auth');
+    // Users.findByToken(token).then((user)=>{
+    //   if(!user){
+    //     //    res.status(401).send();
+    //     // it will fire catch
+    //     return Promise.reject();
+    //   }  
+    //   res.send(user);
+    // }).catch((e)=>{
+    //     res.status(401).send();
+    // });
+    res.send(req.user);
 });
 
 app.listen(port, ()=>{
