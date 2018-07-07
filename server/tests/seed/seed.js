@@ -10,6 +10,7 @@ const {Users} = require('./../../models/user');
 const userOneId = new ObjectId();
 const userTwoId = new ObjectId();
 
+//remove from server.test.js refactoring purpose
 const todos = [
     {   _id:new ObjectId(),
         text:'Todo1'
@@ -38,6 +39,7 @@ const users = [
     }
 ];
 
+//remove from server.test.js. it will call from beforeEach
 const populateTodos = (done)=>{
     Todo.remove({}).then(()=>{
         return Todo.insertMany(todos);       
